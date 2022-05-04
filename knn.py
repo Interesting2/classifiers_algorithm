@@ -11,13 +11,14 @@ def check_data_type():
   pass
 
 def calc_dist(training_data, test_row):
+#   print(cfs)
   dist = []
   for index, row in enumerate(training_data):
     euclidean = 0
-    for i in range(len(test_row)):    # remember to change back to len(test_row)
-      #print(test_row[i], row[i])
+    for i in range(len(test_row) -1):    # remember to change back to len(test_row)
+    #   print(test_row[i], row[i])
       
-      #check_data_type(test_row[i])
+    #   check_data_type(test_row[i])
       diff = (float(test_row[i]) - float(row[i])) ** 2
       euclidean += diff
     euclidean = euclidean ** 0.5
@@ -43,20 +44,54 @@ def get_k_nearest(dist_array, training_data, k):
   #print(neighbours)
   return neighbours
     
+def check_accuracy(target_output, testing_data):
+    correct = 0
+    for i in range(len(target_output)):
+        if target_output[i] == testing_data[i][-1]: correct += 1
+    # print(correct / len(target_output))
+    return correct * 100 / len(target_output)
+
 
 def classify_nn(file_path, k):
-  stratified_folds = scv.run(file_path)
-  print(stratified_folds)
+    stratified_folds = scv.run(file_path)
+    # print(stratified_folds)
+    # print(cfs)
   
-#   all_training_data.extend(training_data)
-#   output = []
-#   for row in testing_data:
-#    # print(row)
-#     dist = calc_dist(training_data, row)
-#     output += [predict(dist, k, training_data)]#
-#   #return ['yes'] * len(testing_data)
-#   return output
+    # for each fold
+    folds = len(stratified_folds)
+    total_accuracy = 0
+    for fold in stratified_folds:
+        testing_data = fold
+        # rest of the folds
+        training_data = []
+        for each_fold in stratified_folds:
+            if each_fold != fold:
+                training_data += each_fold
+        
+        output = []
+        # print(len(testing_data))
+        for row in testing_data:
+            # print(row)
+            dist = calc_dist(training_data, row)
+            output += [predict(dist, k, training_data)]#
+        
+        accuracy = check_accuracy(output, testing_data)
+        # print(output)
+        # print(accuracy)
+        total_accuracy += accuracy
+    
+    # average total_accuracy
+    total_accuracy /= folds
+    # print(total_accuracy)
+    return round(total_accuracy, 2)
+        # print(output)
+    # print(output)
+    # return output
   
 
 if __name__ == '__main__':
-    classify_nn("pima.csv", 1)
+    print(classify_nn("pima.csv", 1))
+    print(classify_nn("pima.csv", 5))
+
+    print(classify_nn("pima-CFS.csv", 1))
+    print(classify_nn("pima-CFS.csv", 5))

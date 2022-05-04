@@ -1,7 +1,7 @@
 import pandas as pd
 
 def read_csv(filename):
-    data = pd.read_csv(filename)
+    data = pd.read_csv(filename, header=None)
     return data.values.tolist()
 
 def write_to_csv(formatted_data):
@@ -35,17 +35,17 @@ def format_data(stratified_folds):
 
 def cross_validation(yes_class, no_class, num_data):
     stratified_folds = stratified_alt(yes_class, no_class, num_data)
-    format_data(stratified_folds)
+    # format_data(stratified_folds)
     # print(stratified_folds)
     return stratified_folds
     
 
 def stratified_alt(yes_class, no_class, num_data):
     fold = 10
-    print(len(yes_class), len(no_class))
+    # print(len(yes_class), len(no_class))
     yes_num = len(yes_class) // fold
     no_num = len(no_class) // fold
-    print(yes_num, no_num)
+    # print(yes_num, no_num)
 
     yes_tracker, no_tracker = 0, 0
     stratified_folds = []
@@ -60,7 +60,7 @@ def stratified_alt(yes_class, no_class, num_data):
         no_tracker += no_num
     
         stratified_folds.append(each_fold)
-    print(yes_tracker, no_tracker)
+    # print(yes_tracker, no_tracker)
 
     if yes_tracker != len(yes_class):
         for yes_row in range(yes_tracker, len(yes_class)):
@@ -70,8 +70,8 @@ def stratified_alt(yes_class, no_class, num_data):
             stratified_folds[no_row % fold].append(no_class[no_row])
 
 
-    for i in stratified_folds:
-        print(len(i))
+    # for i in stratified_folds:
+    #     print(len(i))
     return stratified_folds
 
 
@@ -79,7 +79,7 @@ def stratified(yes_class, no_class, num_data):
     stratified_folds = []
     folds = 10
     mixed_data = []
-    print(len(yes_class), len(no_class))
+    # print(len(yes_class), len(no_class))
     min_length = min(len(yes_class), len(no_class))
     for (yes_row, no_row) in zip(yes_class, no_class):
         mixed_data.append(yes_row)
@@ -114,7 +114,7 @@ def stratified(yes_class, no_class, num_data):
     if len(yes_class) == min_length:
         # print(len(no_class))
         # iterate no_class 
-        print(min_length, len(no_class))
+        # print(min_length, len(no_class))
         for no_row in range(min_length, len(no_class)):
             # add to stratified_folds equally
             stratified_folds[tracker % folds].append(no_class[no_row])
@@ -127,8 +127,8 @@ def stratified(yes_class, no_class, num_data):
             stratified_folds[tracker % folds].append(yes_class[yes_row])
             tracker += 1
     
-    for each_fold in stratified_folds:
-        print(len(each_fold))
+    # for each_fold in stratified_folds:
+    #     print(len(each_fold))
         # print(each_fold[-1], each_fold[0])
     return stratified_folds
 
@@ -141,8 +141,11 @@ def run(file_path):
     no_class = []
     for i in range(len(data)):
         # split into two sets
+        # print(data[i])
         if data[i][-1] == 'yes': yes_class.append(data[i])
         else: no_class.append(data[i])
+    # print(yes_class)
+    # print(no_class)
     return cross_validation(yes_class, no_class, len(data) // 10);
 
     return 
